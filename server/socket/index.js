@@ -4,8 +4,8 @@ import socketMiddleware from "../socket/middleware/socketMiddleware.js";
 const setupSocket = (io) => {
   io.use(socketMiddleware);
   io.on("connection", (socket) => {
-    console.log("🆔 User ID:", socket.user._id);
-    //messageHandler(socket);
+    
+    //messageHandler(socket,io);
     //groupHandler(socket);
   });
 };

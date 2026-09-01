@@ -5,7 +5,8 @@ import AuthPage from "./pages/AuthPage.jsx";
 import HomePage from "./pages/HomePage.jsx";
 import Search from "./components/Search.jsx";
 
-import Chat from "./socket/socket.jsx";
+import Chat from "./socket/handlers/Chat.jsx";
+import Message from "./components/Message.jsx";
 
 const App = () => {
   return (
@@ -16,7 +17,11 @@ const App = () => {
       </Route>
 
       <Route path="/" element={<HomePage />}>
-        <Route element={<Chat />} />
+         <Route index element={<div>Home content</div>} />
+      </Route>
+
+      <Route path="/chat/:userId" element={<Chat />}>
+        <Route index element={<Message />} />
       </Route>
 
       <Route path="/search" element={<Search />} />

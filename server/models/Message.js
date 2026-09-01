@@ -1,9 +1,8 @@
 import mongoose from "mongoose";
-import Conversation from "./Conversation";
 
 const messageSchema = new mongoose.Schema(
   {
-    Conversation: {
+    conversation: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Conversation",
       required: true,
@@ -29,7 +28,7 @@ const messageSchema = new mongoose.Schema(
       default: "text",
     },
 
-    readyBy: [
+    readBy: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
@@ -41,5 +40,6 @@ const messageSchema = new mongoose.Schema(
   },
 );
 
+messageSchema.index({ conversation: 1, createdAt: 1 });
 const Message = mongoose.model("Message", messageSchema);
 export default Message;

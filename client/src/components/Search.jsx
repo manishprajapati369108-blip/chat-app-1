@@ -1,14 +1,15 @@
 import api from "../utils/axios";
-import { useEffect, useState } from "react";
+import { useEffect, useState} from "react";
+import { useNavigate } from "react-router-dom";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import CommentIcon from "@mui/icons-material/Comment";
 import IconButton from "@mui/material/IconButton";
-
 const Search = () => {
   const [search, setSearch] = useState("");
   const [users, setUsers] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const timer = setTimeout(async () => {
@@ -61,7 +62,7 @@ const Search = () => {
               key={user._id}
               disableGutters
               secondaryAction={
-                <IconButton aria-label="comment">
+                <IconButton aria-label="comment" onClick={() => {navigate(`/chat/${user._id}`)}}>
                   <CommentIcon />
                 </IconButton>
               }

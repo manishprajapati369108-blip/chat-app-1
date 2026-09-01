@@ -7,6 +7,7 @@ dotenv.config();
 
 const socketMiddleware = async (socket, next) => {
   try {
+   
     const rawCookies = socket.handshake.headers.cookie;
 
     if (!rawCookies) {
@@ -31,6 +32,8 @@ const socketMiddleware = async (socket, next) => {
     }
 
     socket.user = user;
+    socket.userId = user._id.toString();
+     socket.currentConversation = null; // Track current conversation
     next();
   } catch (error) {
     console.error("Socket Error:", error);
