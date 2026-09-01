@@ -20,10 +20,11 @@ const App = () => {
          <Route index element={<div>Home content</div>} />
       </Route>
 
-      <Route path="/chat/:userId" element={<Chat />}>
-        <Route index element={<Message />} />
+      <Route path="/chat/:userId/:conversationId" element={<Chat />}>
+      <Route index element={<Message />} />
       </Route>
-
+     
+      <Route path="/chat/:userId/:conversationId" element={<Chat />}/>
       <Route path="/search" element={<Search />} />
     </Routes>
   );

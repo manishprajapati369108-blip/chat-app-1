@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 import authRoutes from "./routes/authRoutes.js";
 import fetchUsers from "./routes/fetchUsers.js";
 import authMiddleware from "./middleware/authMiddle.js";
-
+import conversation from "./routes/conversation.js";
 dotenv.config();
 
 const app = express();
@@ -22,5 +22,7 @@ app.use(
 
 app.use("/auth", authRoutes);
 app.use("/api", authMiddleware, fetchUsers);
+app.use("/conversation",authMiddleware, conversation); 
+
 
 export default app;

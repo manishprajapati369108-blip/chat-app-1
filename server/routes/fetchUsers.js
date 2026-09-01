@@ -27,22 +27,19 @@ router.get("/users/:userId", async (req, res) => {
 
     const user = await User.findById(userId);
 
-    if( !user) {
+    if (!user) {
       return res.status(404).json({
-        error: 'User not Found'
-      })
+        error: "User not Found",
+      });
     }
 
-    res.json(user)
-   
+    res.json(user);
   } catch (error) {
     console.error("server problem", error);
     res.status(500).json({
       error: "server problem",
-    })
+    });
   }
 });
-
-
 
 export default router;

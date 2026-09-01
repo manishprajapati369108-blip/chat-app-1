@@ -1,31 +1,48 @@
 import api from "../utils/axios";
-import { useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import CommentIcon from "@mui/icons-material/Comment";
 import IconButton from "@mui/material/IconButton";
+import { useSocket } from "../contexts/useContext.jsx";
+import socket from "../socket/socket.jsx";
+
 const Search = () => {
   const [search, setSearch] = useState("");
   const [users, setUsers] = useState([]);
+  const { conversationId, setConversationId} = useSocket();
   const navigate = useNavigate();
 
   useEffect(() => {
     const timer = setTimeout(async () => {
       if (!search.trim()) {
-       setUsers([]);
+        //setUsers([]);
         return;
       }
+     
       const searchTerm = search;
       const params = new URLSearchParams({ q: searchTerm });
       const response = await api.get(`/api/users/search?${params}`);
+      console.log(response.data);
       const data = response.data;
       setUsers(data);
     }, 500);
 
     return () => clearTimeout(timer);
   }, [search]);
+
+  const joinConversation = async(userId) => {
+  try {
+    const response = await api.post(`/conversation/direct/${userId}`)
+    const conversationId = response.data._id;
+    setConversationId(conversationId);
+    socket.emit("joinRoom", conversationId);
+  } catch (error) {
+    console.log(error);
+  }
+};
 
   return (
     <div>
@@ -58,17 +75,23 @@ const Search = () => {
         >
           {users.map((user) => (
             <ListItem
-             className=" border border-amber-100 flex gap-4 mb-5"
+              className=" border border-amber-100 flex gap-4 mb-5"
               key={user._id}
               disableGutters
               secondaryAction={
-                <IconButton aria-label="comment" onClick={() => {navigate(`/chat/${user._id}`)}}>
+                <IconButton
+                  aria-label="comment"
+                  onClick={() => {
+                    joinConversation(user._id);
+                    navigate(`/chat/${user._id}/${conversationId}`);
+                  }}
+                >
                   <CommentIcon />
                 </IconButton>
               }
             >
               <img src={user.avatar} alt="✌️" className="w-10 rounded-4xl" />
-              <ListItemText primary={`${user.name}`}  className="ml-4"/>
+              <ListItemText primary={`${user.name}`} className="ml-4" />
             </ListItem>
           ))}
         </List>
