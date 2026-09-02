@@ -17,7 +17,6 @@ const socketMiddleware = async (socket, next) => {
     const ripedCookies = parse(rawCookies);
 
     const token = ripedCookies.token;
-    console.log(token);
 
     if (!token) {
       return next(new Error("No token Found"));

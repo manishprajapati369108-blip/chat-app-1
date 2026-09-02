@@ -6,13 +6,11 @@ import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import CommentIcon from "@mui/icons-material/Comment";
 import IconButton from "@mui/material/IconButton";
-import { useSocket } from "../contexts/useContext.jsx";
 import socket from "../socket/socket.jsx";
 
 const Search = () => {
   const [search, setSearch] = useState("");
   const [users, setUsers] = useState([]);
-  const { conversationId, setConversationId} = useSocket();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -37,8 +35,8 @@ const Search = () => {
   try {
     const response = await api.post(`/conversation/direct/${userId}`)
     const conversationId = response.data._id;
-    setConversationId(conversationId);
     socket.emit("joinRoom", conversationId);
+    return conversationId;
   } catch (error) {
     console.log(error);
   }
@@ -81,8 +79,8 @@ const Search = () => {
               secondaryAction={
                 <IconButton
                   aria-label="comment"
-                  onClick={() => {
-                    joinConversation(user._id);
+                  onClick={async() => {
+                    const conversationId = await joinConversation(user._id);
                     navigate(`/chat/${user._id}/${conversationId}`);
                   }}
                 >

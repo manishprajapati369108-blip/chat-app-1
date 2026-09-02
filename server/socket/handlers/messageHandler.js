@@ -3,16 +3,26 @@ const messageHandler = (socket, io) => {
   socket.on("joinRoom", (conversationId) => {
     try {
       socket.join(conversationId);
-      console.log("user joined room:", conversationId);
     } catch (error) {
       console.error(error);
     }
   });
 
-  socket.on("sendMessage", async (data) => {
+  socket.on("sendMessage", async (data, callback) => {
     try {
-      const conversationId = data.conversationId;
-      const content = data.content;
+      const { conversationId, content } = data;
+
+      if (!conversationId) {
+        return callback?.({
+          error: "Conversation ID is required",
+        });
+      }
+
+      if (!content?.trim()) {
+        return callback?.({
+          error: "Message cannot be empty",
+        });
+      }
 
       const message = await Message.create({
         conversation: conversationId,
@@ -20,10 +30,26 @@ const messageHandler = (socket, io) => {
         sender: socket.user._id,
       });
 
+      await message.populate("sender", "name email");
+
+      console.log(message);
+
       io.to(conversationId).emit("newMessage", message);
+
+      callback?.({
+        success: true,
+      });
     } catch (error) {
       console.error(error);
+      callback?.({
+        error: error.message,
+      });
     }
+  });
+
+  socket.on("leaveRoom", (conversationId) => {
+    socket.leave(conversationId);
+    console.log(`${conversationId} is leaved by ${socket.user.name} `);
   });
 };
 export default messageHandler;

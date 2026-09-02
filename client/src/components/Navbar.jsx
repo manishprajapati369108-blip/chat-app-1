@@ -16,7 +16,6 @@ const Navbar = () => {
     const fetchProfile = async () => {
       try {
         const response = await api.get("/auth/me");
-        console.log(response.data);
         setAvatar(response?.data?.user?.avatar);
       } catch (error) {
         console.log(error);

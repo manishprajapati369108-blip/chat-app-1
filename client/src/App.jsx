@@ -23,8 +23,7 @@ const App = () => {
       <Route path="/chat/:userId/:conversationId" element={<Chat />}>
       <Route index element={<Message />} />
       </Route>
-     
-      <Route path="/chat/:userId/:conversationId" element={<Chat />}/>
+      
       <Route path="/search" element={<Search />} />
     </Routes>
   );

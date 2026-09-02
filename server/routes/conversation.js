@@ -1,5 +1,6 @@
 import express from "express";
 import Conversation from "../models/Conversation.js";
+import Message from "../models/Message.js";
 
 const router = express.Router();
 
@@ -18,21 +19,35 @@ router.post("/direct/:userId", async (req, res) => {
     });
 
     if (!prevConv) {
-        prevConv = await Conversation.create({
-            type: "direct",
-            participants: {
-                $addToSet : [currentUser, anotherUser]
-            },
-            directKey
-        })
+      prevConv = await Conversation.create({
+        type: "direct",
+        participants: [currentUser, anotherUser],
+        directKey,
+      });
     }
-    
+
     res.json(prevConv);
-   
   } catch (error) {
     console.error("Server failed", error);
-    res.json(500).json({
+    res.status(500).json({
       error: "Server failed",
+    });
+  }
+});
+
+router.get("/messages/:conversationId", async (req, res) => {
+  try {
+    const { conversationId } = req.params;
+
+    const messages = await Message.find({
+      conversation: conversationId,
+    }).sort({
+      createdAt: 1,
+    });
+    res.status(200).json(messages);
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to fetch messages",
     });
   }
 });
