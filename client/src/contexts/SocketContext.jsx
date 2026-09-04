@@ -4,14 +4,11 @@ import { useState } from "react";
 const SocketContext = createContext();
 
 const SocketProvider = ({ children }) => {
-  const [message, setMessage] = useState("");
-  const [conversationId, setConversationId] = useState(null);
+  const [isMine, setIsMine] = useState(false);
 
   const value = {
-    message,
-    setMessage,
-    conversationId,
-    setConversationId,
+    isMine,
+    setIsMine
   };
 
   return (

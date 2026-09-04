@@ -14,7 +14,6 @@ const joinRequestSchema = new mongoose.Schema({
         ref: "User",
         required: true,
         index: true
-
     },
     status: {
         type: String,

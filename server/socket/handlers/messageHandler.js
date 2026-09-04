@@ -3,6 +3,7 @@ const messageHandler = (socket, io) => {
   socket.on("joinRoom", (conversationId) => {
     try {
       socket.join(conversationId);
+
     } catch (error) {
       console.error(error);
     }
@@ -32,10 +33,8 @@ const messageHandler = (socket, io) => {
 
       await message.populate("sender", "name email");
 
-      console.log(message);
-
       io.to(conversationId).emit("newMessage", message);
-
+  
       callback?.({
         success: true,
       });

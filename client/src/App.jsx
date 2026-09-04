@@ -4,7 +4,7 @@ import Register from "./components/Register.jsx";
 import AuthPage from "./pages/AuthPage.jsx";
 import HomePage from "./pages/HomePage.jsx";
 import Search from "./components/Search.jsx";
-
+import PrevCov from "./components/PrevCov.jsx";
 import Chat from "./socket/handlers/Chat.jsx";
 import Message from "./components/Message.jsx";
 
@@ -17,7 +17,7 @@ const App = () => {
       </Route>
 
       <Route path="/" element={<HomePage />}>
-         <Route index element={<div>Home content</div>} />
+         <Route index element={<PrevCov />} />
       </Route>
 
       <Route path="/chat/:userId/:conversationId" element={<Chat />}>

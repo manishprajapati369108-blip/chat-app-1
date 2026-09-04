@@ -5,6 +5,9 @@ const socket = io("http://localhost:5000", {
 });
 
 socket.on("connect", () => {
+
+  console.log("🔥 SOCKET INSTANCE CREATED");
+  
   console.log("✅ Socket connected:", socket.id);
 
   socket.on("connect_error", (error) => {

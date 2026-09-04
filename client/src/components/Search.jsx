@@ -6,8 +6,7 @@ import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import CommentIcon from "@mui/icons-material/Comment";
 import IconButton from "@mui/material/IconButton";
-import socket from "../socket/socket.jsx";
-
+import { joinConversation } from "../services/joinRoom.js";
 const Search = () => {
   const [search, setSearch] = useState("");
   const [users, setUsers] = useState([]);
@@ -23,7 +22,6 @@ const Search = () => {
       const searchTerm = search;
       const params = new URLSearchParams({ q: searchTerm });
       const response = await api.get(`/api/users/search?${params}`);
-      console.log(response.data);
       const data = response.data;
       setUsers(data);
     }, 500);
@@ -31,17 +29,7 @@ const Search = () => {
     return () => clearTimeout(timer);
   }, [search]);
 
-  const joinConversation = async(userId) => {
-  try {
-    const response = await api.post(`/conversation/direct/${userId}`)
-    const conversationId = response.data._id;
-    socket.emit("joinRoom", conversationId);
-    return conversationId;
-  } catch (error) {
-    console.log(error);
-  }
-};
-
+  
   return (
     <div>
       <div className="flex items-center gap-2.5 px-3 py-2.5 rounded-md bg-white dark:bg-neutral-800 outline-1 -outline-offset-1 outline-slate-300 dark:outline-neutral-700 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-blue-600">

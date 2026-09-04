@@ -19,7 +19,7 @@ const ChatFooter = () => {
         console.log(response.error);
         return;
       }
-      console.log(response);
+     //console.log(response)
     });
     setMessage("");
   };

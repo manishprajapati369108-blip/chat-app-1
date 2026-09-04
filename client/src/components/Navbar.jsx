@@ -1,6 +1,5 @@
 import api from "../utils/axios";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
 import { useAuth } from "../contexts/useContext";
 import TemporaryDrawer from "./Sidebar";
 import PersonSearchIcon from '@mui/icons-material/PersonSearch';
@@ -10,20 +9,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 const Navbar = () => {
   const navigate = useNavigate();
 
-  const { avatar, setAvatar } = useAuth();
-
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const response = await api.get("/auth/me");
-        setAvatar(response?.data?.user?.avatar);
-      } catch (error) {
-        console.log(error);
-        console.log(error.response?.data?.error);
-      }
-    };
-    fetchProfile();
-  }, [setAvatar]);
+  const { avatar, setAvatar, setCurrentUser } = useAuth();
 
   const handleLogout = async (e) => {
     e.preventDefault();
@@ -33,6 +19,8 @@ const Navbar = () => {
       if (response.data.success) {
         console.log(response.data.message);
         navigate("/login");
+        setAvatar(null);
+        setCurrentUser(null);
       }
     } catch (error) {
       console.log(error);
@@ -41,10 +29,10 @@ const Navbar = () => {
   };
 
   return (
-    <div className="flex justify-center bg-blue-400 pt-3 pb-3 border-white rounded-b-xl border-2">
+    <div className="flex items-center w-full bg-blue-400 py-3 border-white rounded-b-xl border-2">
 
       <TemporaryDrawer />
-      <PersonSearchIcon className="mt-1.5 ml-4" onClick={() => navigate("/search")}/>
+      <PersonSearchIcon className="mt-1.5 ml-4 cursor-pointer" onClick={() => navigate("/search")}/>
      
       <button
         onClick={handleLogout}
