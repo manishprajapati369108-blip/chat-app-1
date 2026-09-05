@@ -4,11 +4,11 @@ import { useState } from "react";
 const SocketContext = createContext();
 
 const SocketProvider = ({ children }) => {
-  const [isMine, setIsMine] = useState(false);
+  const [newMessage, setNewMessage] = useState([]);
 
   const value = {
-    isMine,
-    setIsMine
+  newMessage,
+  setNewMessage
   };
 
   return (

@@ -1,9 +1,10 @@
 import Message from "../../models/Message.js";
+import Conversation from "../../models/Conversation.js";
+
 const messageHandler = (socket, io) => {
   socket.on("joinRoom", (conversationId) => {
     try {
       socket.join(conversationId);
-
     } catch (error) {
       console.error(error);
     }
@@ -34,7 +35,7 @@ const messageHandler = (socket, io) => {
       await message.populate("sender", "name email");
 
       io.to(conversationId).emit("newMessage", message);
-  
+
       callback?.({
         success: true,
       });
@@ -44,6 +45,22 @@ const messageHandler = (socket, io) => {
         error: error.message,
       });
     }
+  });
+
+  socket.on("typing",  (conversationId) => {
+   
+    
+    //here socket is me whcih means  i am sending  to others in the conversation but not me . io means in room that all socket also me
+    socket.to(conversationId).emit("typing", { 
+      userId : socket.user._id,
+    name: socket.user.name});
+  });
+
+  socket.on("stopTyping",  (conversationId) => {
+  
+    socket.to(conversationId).emit("stopTyping", {
+      userId : socket.user._id,
+    });
   });
 
   socket.on("leaveRoom", (conversationId) => {

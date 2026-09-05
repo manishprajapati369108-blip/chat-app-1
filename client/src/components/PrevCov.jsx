@@ -1,12 +1,13 @@
 import api from "../utils/axios";
 import { useEffect, useState } from "react";
-import { useAuth } from "../contexts/useContext.jsx";
+import { useAuth} from "../contexts/useContext.jsx";
 import CommentIcon from "@mui/icons-material/Comment";
 import { joinConversation } from "../services/joinRoom.js";
 import { useNavigate } from "react-router-dom";
 
 const PrevCov = () => {
   const { currentUser } = useAuth();
+  
   const [conversations, setConversations] = useState([]);
   const navigate = useNavigate();
   useEffect(() => {
@@ -26,21 +27,23 @@ const PrevCov = () => {
   const getOtherParticipants = (conversation) => {
     return conversation.participants.find((p) => p._id !== currentUser);
   };
-
+  
   return (
-    <div className="flex justify-center items-center ">
+    <div className="flex flex-col items-center w-screen ">
       {conversations.map((conversation) => {
         const otherUser = getOtherParticipants(conversation);
         return (
           <div
             key={conversation._id}
-            className="flex flex-row items-center justify-center w-screen"
+            className="flex items-center w-full gap-35 mt-10 px-10"
           >
             <img src={otherUser.avatar} className="w-10 h-10 rounded" />
-            <p className="ml-5 font-[Nunito] font-bold">{otherUser.name}</p>
 
+            <div>
+            <p className="-ml-25 font-[Nunito] font-bold">{otherUser.name}</p>
+            </div>
             <CommentIcon
-            className="text-blue-400 ml-auto  mr-20"
+            className="text-blue-400 ml-auto cursor-pointer"
               onClick={async () => {
                 const conversationId = await joinConversation(otherUser._id);
                 navigate(`/chat/${otherUser._id}/${conversationId}`);

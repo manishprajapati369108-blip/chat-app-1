@@ -27,7 +27,6 @@ const messageSchema = new mongoose.Schema(
       enum: ["text", "image", "video", "file"],
       default: "text",
     },
-
     readBy: [
       {
         type: mongoose.Schema.Types.ObjectId,

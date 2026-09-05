@@ -59,7 +59,7 @@ const Message = () => {
             >
               {/* Message */}
               <div
-                className={`${!expanded ? "line-clamp-5" : ""} break-words whitespace-pre-wrap`}
+                className={`${!expanded ? "line-clamp-5" : ""} wrap-break whitespace-pre-wrap`}
               >
                 {message.content}
               </div>

@@ -36,6 +36,11 @@ const conversationSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Message",
     },
+
+    unreadCount: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,
