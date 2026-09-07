@@ -36,6 +36,11 @@ const joinRequestSchema = new mongoose.Schema({
         type: String,
         trim : true,
     },
+
+    isRead : {
+       type: Boolean,
+       default : false
+    }
 }, { timestamps : true,});
 
 joinRequestSchema.index({ conversation: 1, user: 1 }, { unique: true });

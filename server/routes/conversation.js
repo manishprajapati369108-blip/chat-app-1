@@ -38,6 +38,20 @@ router.post("/direct/:userId", async (req, res) => {
 router.get("/messages/:conversationId", async (req, res) => {
   try {
     const { conversationId } = req.params;
+    const currentUser = req.user._id;
+
+    const result = await Message.updateMany(
+      {
+        conversation: conversationId,
+        //means all sender but not me which is equal to or mean to receiver
+        sender: { $ne: currentUser },
+        //take only false
+        isRead: false,
+      },
+      {
+        $set: { isRead: true },
+      },
+    );
 
     const messages = await Message.find({
       conversation: conversationId,
@@ -50,6 +64,27 @@ router.get("/messages/:conversationId", async (req, res) => {
   } catch (error) {
     res.status(500).json({
       message: "Failed to fetch messages",
+    });
+  }
+});
+
+router.get("/unread-count", async (req, res) => {
+  try {
+    const currentUser = req.user._id;
+
+    const unreadCount = await Message.countDocuments({
+      sender: { $ne: currentUser },
+      isRead: false,
+    });
+
+    res.status(200).json({
+      success: true,
+      unreadCount,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error,
     });
   }
 });
@@ -80,7 +115,8 @@ router.get("/my-conversation", async (req, res) => {
     const userId = req.user._id;
     const results = await Conversation.find({
       participants: { $in: [userId] },
-    }).populate("lastMessage")
+    })
+      .populate("lastMessage")
       .populate("participants", "name avatar")
       .sort({ updatedAt: -1 })
       .lean();

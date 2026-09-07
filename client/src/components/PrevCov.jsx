@@ -14,25 +14,40 @@ const PrevCov = () => {
 
   const navigate = useNavigate();
 
+  
+
+  useEffect(() => {
+    const fetchCount = async () => {
+      try {
+        const response = await api.get("conversation/unread-count");
+
+        //console.log(response.data.unreadCount);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchCount();
+  },[]);
+
   useEffect(() => {
     const fetchConversation = async () => {
       try {
         const response = await api.get("/conversation/my-conversation");
 
         setConversations(response.data.result);
-        
       } catch (error) {
         console.log(error);
       }
     };
 
     fetchConversation();
-  }, [messages]);
+  }, []);
 
   useEffect(() => {
     conversations.forEach((conversation) => {
       socket.emit("joinRoom", conversation._id);
-    })
+    });
     const handleNewMessage = (message) => {
       setMessages((prev) => [...prev, message]);
     };
