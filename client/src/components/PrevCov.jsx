@@ -11,30 +11,30 @@ const PrevCov = () => {
   const { currentUser } = useAuth();
   const [conversations, setConversations] = useState([]);
   const [messages, setMessages] = useState([]);
+  const [count, setCount] = useState(0);
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchCount = async () => {
-      try {
-        const response = await api.get("conversation/unread-count");
+    conversations.forEach((conversation) => {
+     socket.emit("joinRoom", conversation._id);
+    });
 
-        //console.log(response.data.unreadCount);
-      } catch (error) {
-        console.log(error);
-      }
+    const handleNewMessage = async (message) => {
+      setMessages((prev) => [...prev, message]);
     };
 
-    fetchCount();
-  }, []);
+    socket.on("newMessage", handleNewMessage);
+
+    return () => {
+      socket.off("newMessage", handleNewMessage);
+    };
+  }, [conversations]);
 
   useEffect(() => {
     const fetchConversation = async () => {
-      try {console.log("FETCHING CONVERSATIONS");
-
+      try {
         const response = await api.get("/conversation/my-conversation");
-
-        console.log("RESULT:", response.data.result);
 
         setConversations(response.data.result);
       } catch (error) {
@@ -43,23 +43,31 @@ const PrevCov = () => {
     };
 
     fetchConversation();
-  }, [messages]);
+  }, []);
 
   useEffect(() => {
+    const fetchCount = async () => {
+      try {
+        const response = await api.get("conversation/unread-count");
+
+        setCount(response?.data?.unreadCount);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchCount();
+  }, [messages]);
+
+   useEffect(() => {
+    if (!conversations.length) return;
+
     conversations.forEach((conversation) => {
       socket.emit("joinRoom", conversation._id);
     });
-
-    const handleNewMessage = async (message) => {
-      console.log("NEW MESSAGE:", message);
-      setMessages((prev) => [...prev, message]);
-    };
-
-    socket.on("newMessage", handleNewMessage);
-    return () => {
-      socket.off("newMessage", handleNewMessage);
-    };
   }, [conversations]);
+
+  
 
   const getOtherParticipants = (conversation) => {
     return conversation.participants.find((p) => p._id !== currentUser);
@@ -73,11 +81,11 @@ const PrevCov = () => {
         return (
           <div
             key={conversation._id}
-            className="flex items-center w-full gap-35 mt-10 px-15"
+            className="flex items-center w-full gap-25 mt-10 px-15 justify-center"
           >
             <img src={otherUser.avatar} className="w-15 h-15 rounded-3xl" />
 
-            <div className="flex flex-col justify-center -ml-25">
+            <div className="flex flex-col justify-center -ml-20">
               <p className=" font-[Nunito] font-bold text-[20px]">
                 {otherUser.name}
               </p>
@@ -86,13 +94,22 @@ const PrevCov = () => {
                 {conversation.lastMessage?.content ?? "No Message"}
               </p>
             </div>
-            <CommentIcon
-              className="text-blue-400 ml-auto cursor-pointer"
-              onClick={async () => {
-                const conversationId = await joinConversation(otherUser._id);
-                navigate(`/chat/${otherUser._id}/${conversationId}`);
-              }}
-            />
+
+            <div className="flex flex-row gap-7 items-center">
+              {count > 0 && (
+                <div className="bg-green-400 p-1 pl-3 pr-3 rounded-4xl">
+                  {count}{" "}
+                </div>
+              )}
+
+              <CommentIcon
+                className="text-blue-400 ml-auto cursor-pointer"
+                onClick={async () => {
+                  const conversationId = await joinConversation(otherUser._id);
+                  navigate(`/chat/${otherUser._id}/${conversationId}`);
+                }}
+              />
+            </div>
           </div>
         );
       })}

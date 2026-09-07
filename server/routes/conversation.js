@@ -40,7 +40,7 @@ router.get("/messages/:conversationId", async (req, res) => {
     const { conversationId } = req.params;
     const currentUser = req.user._id;
 
-    const result = await Message.updateMany(
+     await Message.updateMany(
       {
         conversation: conversationId,
         //means all sender but not me which is equal to or mean to receiver

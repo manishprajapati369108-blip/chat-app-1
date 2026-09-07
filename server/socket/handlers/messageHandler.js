@@ -55,7 +55,6 @@ const messageHandler = (socket, io) => {
 
   socket.on("typing",  (conversationId) => {
    
-    
     //here socket is me whcih means  i am sending  to others in the conversation but not me . io means in room that all socket also me
     socket.to(conversationId).emit("typing", { 
       userId : socket.user._id,
