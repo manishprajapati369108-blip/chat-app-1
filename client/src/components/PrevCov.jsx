@@ -14,8 +14,6 @@ const PrevCov = () => {
 
   const navigate = useNavigate();
 
-  
-
   useEffect(() => {
     const fetchCount = async () => {
       try {
@@ -28,12 +26,15 @@ const PrevCov = () => {
     };
 
     fetchCount();
-  },[]);
+  }, []);
 
   useEffect(() => {
     const fetchConversation = async () => {
-      try {
+      try {console.log("FETCHING CONVERSATIONS");
+
         const response = await api.get("/conversation/my-conversation");
+
+        console.log("RESULT:", response.data.result);
 
         setConversations(response.data.result);
       } catch (error) {
@@ -42,13 +43,15 @@ const PrevCov = () => {
     };
 
     fetchConversation();
-  }, []);
+  }, [messages]);
 
   useEffect(() => {
     conversations.forEach((conversation) => {
       socket.emit("joinRoom", conversation._id);
     });
-    const handleNewMessage = (message) => {
+
+    const handleNewMessage = async (message) => {
+      console.log("NEW MESSAGE:", message);
       setMessages((prev) => [...prev, message]);
     };
 
