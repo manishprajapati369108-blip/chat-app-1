@@ -32,6 +32,10 @@ const messageHandler = (socket, io) => {
         sender: socket.user._id,
       });
 
+      await Conversation.findByIdAndUpdate(conversationId, {
+         lastMessage: message._id,
+      });
+
       await message.populate("sender", "name email");
 
       io.to(conversationId).emit("newMessage", message);

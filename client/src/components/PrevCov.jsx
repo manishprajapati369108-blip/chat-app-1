@@ -1,49 +1,75 @@
 import api from "../utils/axios";
 import { useEffect, useState } from "react";
-import { useAuth} from "../contexts/useContext.jsx";
+import { useAuth } from "../contexts/useContext.jsx";
 import CommentIcon from "@mui/icons-material/Comment";
 import { joinConversation } from "../services/joinRoom.js";
 import { useNavigate } from "react-router-dom";
+import socket from "../socket/socket.jsx";
 
+//for direct chat
 const PrevCov = () => {
   const { currentUser } = useAuth();
-  
   const [conversations, setConversations] = useState([]);
+  const [messages, setMessages] = useState([]);
+
   const navigate = useNavigate();
+
   useEffect(() => {
     const fetchConversation = async () => {
       try {
         const response = await api.get("/conversation/my-conversation");
 
         setConversations(response.data.result);
+        
       } catch (error) {
         console.log(error);
       }
     };
 
     fetchConversation();
-  }, []);
+  }, [messages]);
+
+  useEffect(() => {
+    conversations.forEach((conversation) => {
+      socket.emit("joinRoom", conversation._id);
+    })
+    const handleNewMessage = (message) => {
+      setMessages((prev) => [...prev, message]);
+    };
+
+    socket.on("newMessage", handleNewMessage);
+    return () => {
+      socket.off("newMessage", handleNewMessage);
+    };
+  }, [conversations]);
 
   const getOtherParticipants = (conversation) => {
     return conversation.participants.find((p) => p._id !== currentUser);
   };
-  
+
   return (
-    <div className="flex flex-col items-center w-screen ">
+    <div className="flex flex-col items-center w-screen -ml-5 ">
       {conversations.map((conversation) => {
         const otherUser = getOtherParticipants(conversation);
+
         return (
           <div
             key={conversation._id}
-            className="flex items-center w-full gap-35 mt-10 px-10"
+            className="flex items-center w-full gap-35 mt-10 px-15"
           >
-            <img src={otherUser.avatar} className="w-10 h-10 rounded" />
+            <img src={otherUser.avatar} className="w-15 h-15 rounded-3xl" />
 
-            <div>
-            <p className="-ml-25 font-[Nunito] font-bold">{otherUser.name}</p>
+            <div className="flex flex-col justify-center -ml-25">
+              <p className=" font-[Nunito] font-bold text-[20px]">
+                {otherUser.name}
+              </p>
+
+              <p className=" w-45 text-[16px] font-[Nunito] text-[#5068e0] bold truncate ">
+                {conversation.lastMessage?.content ?? "No Message"}
+              </p>
             </div>
             <CommentIcon
-            className="text-blue-400 ml-auto cursor-pointer"
+              className="text-blue-400 ml-auto cursor-pointer"
               onClick={async () => {
                 const conversationId = await joinConversation(otherUser._id);
                 navigate(`/chat/${otherUser._id}/${conversationId}`);

@@ -5,7 +5,7 @@ const ChatFooter = () => {
   const [message, setMessage] = useState("");
   const { conversationId, userId } = useParams();
 
-  const handleSend = async (e) => {
+  const handleSend = async () => {
     const data = {
       conversationId,
       content: message.trim(),

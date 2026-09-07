@@ -41,9 +41,11 @@ router.get("/messages/:conversationId", async (req, res) => {
 
     const messages = await Message.find({
       conversation: conversationId,
-    }).populate("sender", "name").sort({
-      createdAt: 1,
-    });
+    })
+      .populate("sender", "name")
+      .sort({
+        createdAt: 1,
+      });
     res.status(200).json(messages);
   } catch (error) {
     res.status(500).json({
@@ -54,47 +56,46 @@ router.get("/messages/:conversationId", async (req, res) => {
 
 router.delete("/delete-all/:conversationId", async (req, res) => {
   try {
-    const {conversationId} = req.params;
-    
+    const { conversationId } = req.params;
+
     await Message.deleteMany({
-      conversation :conversationId,
-    })
+      conversation: conversationId,
+    });
 
     await Conversation.findByIdAndDelete(conversationId);
 
-
     res.status(200).json({
-      message: "conversation deleted Successfully"
-    })
-
-  }catch (error) {
+      message: "conversation deleted Successfully",
+    });
+  } catch (error) {
     console.log(error);
     res.status(500).json({
-      message: "Conversation delete failed"
-    })
+      message: "Conversation delete failed",
+    });
   }
-})
+});
 
-router.get("/my-conversation", async(req, res) => {
+router.get("/my-conversation", async (req, res) => {
   try {
     const userId = req.user._id;
-     const results = await Conversation.find({
-      participants: { $in : [userId] },
-    }).populate("participants", "name avatar")
-    .sort({ updatedAt : -1})
-    .lean();
+    const results = await Conversation.find({
+      participants: { $in: [userId] },
+    }).populate("lastMessage")
+      .populate("participants", "name avatar")
+      .sort({ updatedAt: -1 })
+      .lean();
 
     res.status(200).json({
       success: true,
       result: results,
-    })
+    });
   } catch (error) {
     console.error("server error", error);
     res.status(500).json({
       success: false,
       error: error.message,
-    })
+    });
   }
-})
+});
 
 export default router;

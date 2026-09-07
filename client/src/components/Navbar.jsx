@@ -4,6 +4,7 @@ import { useAuth } from "../contexts/useContext";
 import TemporaryDrawer from "./Sidebar";
 import PersonSearchIcon from '@mui/icons-material/PersonSearch';
 import LogoutIcon from '@mui/icons-material/Logout';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 
 
 const Navbar = () => {
@@ -32,8 +33,9 @@ const Navbar = () => {
     <div className="flex items-center w-full bg-blue-400 py-3 border-white rounded-b-xl border-2">
 
       <TemporaryDrawer />
-      <PersonSearchIcon className="mt-1.5 ml-4 cursor-pointer" onClick={() => navigate("/search")}/>
+      <PersonSearchIcon className=" ml-4 cursor-pointer" onClick={() => navigate("/search")}/>
      
+      <NotificationsIcon  className=" ml-auto -mr-50 lg:-mr-300"/>
       <button
         onClick={handleLogout}
         className="ml-auto mr-5 text-[18px] font-bold"

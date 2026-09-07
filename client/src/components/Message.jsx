@@ -9,20 +9,21 @@ const Message = () => {
   const [messages, setMessages] = useState([]);
   const bottomRef = useRef(null);
   const { currentUser } = useAuth();
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(false);;
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({
       behavior: "smooth",
     });
   }, [messages]);
-
+  
   useEffect(() => {
     const fetchMessages = async () => {
       const res = await api.get(`conversation/messages/${conversationId}`);
       const data = res.data;
       setMessages(data);
     };
+  
     if (conversationId) {
       fetchMessages();
     }
@@ -32,9 +33,12 @@ const Message = () => {
     if (!conversationId) return;
 
     socket.emit("joinRoom", conversationId);
+
     const handleNewMessage = (message) => {
+    
       setMessages((prev) => [...prev, message]);
     };
+
 
     socket.on("newMessage", handleNewMessage);
     return () => {
@@ -46,7 +50,7 @@ const Message = () => {
     <div className="h-full overflow-y-auto p-3">
       {messages.map((message) => {
         const isMine = message.sender._id === currentUser;
-
+       
         return (
           <div
             key={message._id}
