@@ -2,6 +2,12 @@ import Message from "../../models/Message.js";
 import Conversation from "../../models/Conversation.js";
 
 const messageHandler = (socket, io) => {
+
+  socket.on("joinUserRoom", (userId) => {
+    socket.join(`user:${userId}`);
+    //console.log(`User ${userId} joined user:${userId}`);
+  })
+
   socket.on("joinRoom", (conversationId) => {
     try {
       socket.join(conversationId);
@@ -13,6 +19,10 @@ const messageHandler = (socket, io) => {
   socket.on("sendMessage", async (data, callback) => {
     try {
       const { conversationId, content } = data;
+      const conversation = await Conversation.findById(conversationId).populate(
+        "participants",
+        "_id",
+      );
 
       if (!conversationId) {
         return callback?.({
@@ -32,15 +42,26 @@ const messageHandler = (socket, io) => {
         sender: socket.user._id,
       });
 
-      await Conversation.findByIdAndUpdate(conversationId, {
-         lastMessage: message._id,
-      }, {
-        new: true,
-      });
+      await Conversation.findByIdAndUpdate(
+        conversationId,
+        {
+          lastMessage: message._id,
+        },
+        {
+          new: true,
+        },
+      );
 
       await message.populate("sender", "name email");
 
       io.to(conversationId).emit("newMessage", message);
+
+      conversation.participants.forEach((participant) => {
+        io.to(`user:${participant._id}`).emit("newMessageNotification", {
+          conversationId,
+          message,
+        });
+      });
 
       callback?.({
         success: true,
@@ -53,18 +74,17 @@ const messageHandler = (socket, io) => {
     }
   });
 
-  socket.on("typing",  (conversationId) => {
-   
+  socket.on("typing", (conversationId) => {
     //here socket is me whcih means  i am sending  to others in the conversation but not me . io means in room that all socket also me
-    socket.to(conversationId).emit("typing", { 
-      userId : socket.user._id,
-    name: socket.user.name});
+    socket.to(conversationId).emit("typing", {
+      userId: socket.user._id,
+      name: socket.user.name,
+    });
   });
 
-  socket.on("stopTyping",  (conversationId) => {
-  
+  socket.on("stopTyping", (conversationId) => {
     socket.to(conversationId).emit("stopTyping", {
-      userId : socket.user._id,
+      userId: socket.user._id,
     });
   });
 
