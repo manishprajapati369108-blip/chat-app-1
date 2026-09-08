@@ -1,5 +1,6 @@
 import { createContext, useState } from "react";
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../utils/axios";
 
 
@@ -7,20 +8,30 @@ const AuthContext = createContext();
 
 const AuthProvider = ({children}) => {
     const [avatar, setAvatar] = useState(null);
-    const [currentUser, setCurrentUser] = useState("")
+    const [currentUser, setCurrentUser] = useState("");
+    const navigate = useNavigate();
     useEffect(() => {
     const fetchProfile = async () => {
       try {
         const response = await api.get("/auth/me");
+        
         setAvatar(response?.data?.user?.avatar);
-        setCurrentUser(response?.data?.user?._id)
+        setCurrentUser(response?.data?.user?._id);
+        const isLogged = response?.data?.user;
+
+        if(!isLogged) {
+          navigate("/login");
+          return;
+        }
       } catch (error) {
         console.log(error);
-        console.log(error.response?.data?.error);
+         if (error.response?.status === 401) {
+          navigate("/login");
+        }
       }
     };
     fetchProfile();
-  }, [setAvatar, setCurrentUser]);
+  }, [navigate]);
 
     const value = {
         setAvatar,

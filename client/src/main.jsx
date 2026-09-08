@@ -4,19 +4,18 @@ import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext.jsx";
 import { SocketProvider } from "./contexts/SocketContext.jsx";
 import "./index.css";
-import CssBaseline from '@mui/material/CssBaseline';
+import CssBaseline from "@mui/material/CssBaseline";
 import App from "./App.jsx";
-
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <AuthProvider>
-      <SocketProvider>
-      <BrowserRouter>
-       <CssBaseline />
-        <App />
-      </BrowserRouter>
-      </SocketProvider>
-    </AuthProvider>
+    <BrowserRouter>
+      <AuthProvider>
+        <SocketProvider>
+          <CssBaseline />
+          <App />
+        </SocketProvider>
+      </AuthProvider>
+    </BrowserRouter>
   </StrictMode>,
 );

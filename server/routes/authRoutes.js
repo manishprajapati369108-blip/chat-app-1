@@ -22,10 +22,7 @@ router.post("/register", async (req, res) => {
 
     const style = new Style(definition);
     const avatar = new Avatar(style, {
-      
-      lettersVariant: [
-        "double"   
-      ],
+      lettersVariant: ["double"],
       seed: name,
     });
 
@@ -73,16 +70,21 @@ router.post("/register", async (req, res) => {
 
 router.post("/login", async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email: input, password } = req.body;
 
-    if (!email || !password) {
+    if (!input || !password) {
       return res.status(400).json({
         success: false,
         error: "Email is required",
       });
     }
 
-    const person = await User.findOne({ email });
+    const person = await User.findOne({
+      $or: [
+        { email : input },
+        {name : input }
+      ]
+    });
 
     if (!person) {
       return res.status(401).json({

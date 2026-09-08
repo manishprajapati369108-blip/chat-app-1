@@ -55,10 +55,9 @@ const Login = () => {
           </legend>
 
           <label htmlFor="email" className="mt-4">
-            Email:
+            Email or Username:
           </label>
           <input
-            type="email"
             className="border"
             id="email"
             value={email}
