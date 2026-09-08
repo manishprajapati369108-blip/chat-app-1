@@ -8,8 +8,6 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
 import MenuIcon from '@mui/icons-material/Menu';
 
 
@@ -23,29 +21,29 @@ export default function TemporaryDrawer() {
   const DrawerList = (
     <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)}>
       <List>
-        {['Create Group', 'Join Group'].map((text, index) => (
-          <ListItem key={text} disablePadding>
+       
+          <ListItem disablePadding>
             <ListItemButton>
               <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+              
               </ListItemIcon>
-              <ListItemText primary={text} />
+              <ListItemText primary= "Create Group" />
             </ListItemButton>
           </ListItem>
-        ))}
+       
       </List>
       <Divider />
       <List>
-        {["Thanks for Visiting"].map((text, index) => (
-          <ListItem key={text} disablePadding>
+      
+          <ListItem disablePadding>
             <ListItemButton>
               <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                
               </ListItemIcon>
-              <ListItemText primary={text} />
+              <ListItemText primary="Join Group" />
             </ListItemButton>
           </ListItem>
-        ))}
+        
       </List>
     </Box>
   );
