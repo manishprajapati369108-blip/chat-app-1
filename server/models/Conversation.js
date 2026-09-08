@@ -27,6 +27,11 @@ const conversationSchema = new mongoose.Schema(
       trim: true,
     },
 
+    avatar: {
+      type: String,
+      default: "dj"
+    },
+
     groupAdmin: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
