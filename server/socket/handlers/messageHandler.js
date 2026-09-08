@@ -57,10 +57,7 @@ const messageHandler = (socket, io) => {
       io.to(conversationId).emit("newMessage", message);
      
       conversation.participants.forEach((participant) => {
-        io.to(`user:${participant._id}`).emit("newMessageNotification", {
-          conversationId,
-          message,
-        });
+        io.to(`user:${participant._id}`).emit("newMessageNotification");
       });
 
       callback?.({
