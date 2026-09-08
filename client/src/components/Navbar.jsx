@@ -35,7 +35,7 @@ const Navbar = () => {
       <TemporaryDrawer />
       <PersonSearchIcon className=" ml-4 cursor-pointer" onClick={() => navigate("/search")}/>
      
-      <NotificationsIcon  className=" ml-auto -mr-50 lg:-mr-300"/>
+      <NotificationsIcon  className="  sm: ml-auto -mr-20 lg:-mr-300"/>
       <button
         onClick={handleLogout}
         className="ml-auto mr-5 text-[18px] font-bold"

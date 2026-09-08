@@ -28,9 +28,7 @@ const PrevCov = () => {
   // FETCH UNREAD COUNT
   const fetchCount = async () => {
     try {
-      const response = await api.get(
-        "/conversation/unread-count"
-      );
+      const response = await api.get("/conversation/unread-count");
 
       setCount(response?.data?.unreadCount || 0);
     } catch (error) {
@@ -54,10 +52,8 @@ const PrevCov = () => {
   useEffect(() => {
     if (!currentUser) return;
 
-    const userId =
-      typeof currentUser === "object"
-        ? currentUser._id
-        : currentUser;
+    const userId = currentUser;
+      //typeof currentUser === "object" ? currentUser._id : currentUser;
 
     // Join personal user room
     socket.emit("joinUserRoom", userId);
@@ -69,16 +65,10 @@ const PrevCov = () => {
       fetchCount();
     };
 
-    socket.on(
-      "newMessageNotification",
-      handleNewMessageNotification
-    );
+    socket.on("newMessageNotification", handleNewMessageNotification);
 
     return () => {
-      socket.off(
-        "newMessageNotification",
-        handleNewMessageNotification
-      );
+      socket.off("newMessageNotification", handleNewMessageNotification);
     };
   }, [currentUser]);
 
@@ -90,18 +80,14 @@ const PrevCov = () => {
   }, [conversations]);
 
   const getOtherParticipants = (conversation) => {
-    const currentUserId =
-      typeof currentUser === "object"
-        ? currentUser._id
-        : currentUser;
+    const currentUserId = currentUser
+      //typeof currentUser === "object" ? currentUser._id : currentUser;
 
-    return conversation.participants.find(
-      (p) => p._id !== currentUserId
-    );
+    return conversation.participants.find((p) => p._id !== currentUserId);
   };
 
   return (
-    <div className="flex flex-col items-center w-screen -ml-5">
+    <div className="flex flex-col items-center w-full min-h-screen bg-gray-50 py-6">
       {conversations.map((conversation) => {
         const otherUser = getOtherParticipants(conversation);
 
@@ -110,40 +96,37 @@ const PrevCov = () => {
         return (
           <div
             key={conversation._id}
-            className="flex items-center w-full gap-25 mt-10 px-15 justify-center"
+            className="flex items-center w-full max-w-2xl gap-5 px-5 py-4 bg-white border-b border-gray-100 hover:bg-gray-50 transition-colors duration-200"
           >
             <img
               src={otherUser.avatar}
-              className="w-15 h-15 rounded-3xl"
+              className="w-14 h-14 rounded-full object-cover shrink-0 ring-2 ring-gray-100"
               alt={otherUser.name}
             />
 
-            <div className="flex flex-col justify-center -ml-20">
-              <p className="font-[Nunito] font-bold text-[20px]">
+            <div className="flex flex-col justify-center min-w-0 flex-1">
+              <p className="font-[Nunito] font-bold text-[18px] text-gray-800 truncate">
                 {otherUser.name}
               </p>
 
-              <p className="w-45 text-[16px] font-[Nunito] text-[#5068e0] truncate">
+              <p className="w-full text-[15px] font-[Nunito] text-[#5068e0] truncate mt-1">
                 {conversation.lastMessage?.content ?? "No Message"}
               </p>
             </div>
 
-            <div className="flex flex-row gap-7 items-center">
+            <div className="flex flex-row gap-3 items-center shrink-0">
               {count > 0 && (
-                <div className="bg-green-400 p-1 pl-3 pr-3 rounded-4xl">
+                <div className="bg-green-400 text-white text-sm font-semibold min-w-6 h-6 px-2 flex items-center justify-center rounded-full shadow-sm">
                   {count}
                 </div>
               )}
 
               <CommentIcon
-                className="text-blue-400 ml-auto cursor-pointer"
+                className="text-blue-400 cursor-pointer w-6 h-6 hover:text-blue-600 hover:scale-110 transition-all duration-200"
                 onClick={async () => {
-                  const conversationId =
-                    await joinConversation(otherUser._id);
+                  const conversationId = await joinConversation(otherUser._id);
 
-                  navigate(
-                    `/chat/${otherUser._id}/${conversationId}`
-                  );
+                  navigate(`/chat/${otherUser._id}/${conversationId}`);
                 }}
               />
             </div>

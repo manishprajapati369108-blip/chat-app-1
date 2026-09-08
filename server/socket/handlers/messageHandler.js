@@ -48,14 +48,14 @@ const messageHandler = (socket, io) => {
           lastMessage: message._id,
         },
         {
-          new: true,
+         returnDocument : "after"
         },
       );
 
       await message.populate("sender", "name email");
 
       io.to(conversationId).emit("newMessage", message);
-
+     
       conversation.participants.forEach((participant) => {
         io.to(`user:${participant._id}`).emit("newMessageNotification", {
           conversationId,

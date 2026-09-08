@@ -6,7 +6,6 @@ const joinRequestSchema = new mongoose.Schema({
         ref: "Conversation",
         required: true,
         index: true,
-
     },
 
     user : {
